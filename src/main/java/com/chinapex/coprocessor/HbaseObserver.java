@@ -44,26 +44,26 @@ public class HbaseObserver extends BaseRegionObserver{
 
         Configuration conf = env.getConfiguration();
         Properties properties = getProperties(configurePath);
-        Config.clusterName = properties.get("es_cluster")==null?conf.get("es_cluster"):properties.get("es_cluster").toString().trim();
-        Config.nodeHost = properties.get("es_host")==null?conf.get("es_host"):properties.get("es_host").toString().trim();
-        Config.nodePort = properties.get("es_port")==null? conf.getInt("es_port",-1):Integer.parseInt(properties.get("es_port").toString().trim());
-        Config.indexName = properties.get("es_index")==null?conf.get("es_index"):properties.get("es_index").toString().trim();
-        Config.typeName = properties.get("es_type")==null?conf.get("es_type"):properties.get("es_type").toString().trim();
-        Config.connType = properties.get("es_connType")==null?conf.get("es_connType"):properties.get("es_connType").toString().trim();
+        Config.clusterName = conf.get("es_cluster")==null?properties.get("es_cluster").toString().trim():conf.get("es_cluster");
+        Config.nodeHost = conf.get("es_host")==null?properties.get("es_host").toString().trim():conf.get("es_host");
+        Config.nodePort = conf.get("es_port")==null?Integer.parseInt(properties.get("es_port").toString().trim()):conf.getInt("es_port",-1);
+        Config.indexName = conf.get("es_index")==null?properties.get("es_index").toString().trim():conf.get("es_index");
+        Config.typeName = conf.get("es_type")==null?properties.get("es_type").toString().trim():conf.get("es_type");
+        Config.connType = conf.get("es_connType")==null?properties.get("es_connType").toString().trim():conf.get("es_connType");
 
-        Config.bulkActions = properties.get("bulkActions")==null?conf.getInt("bulkActions",1000):Integer.parseInt(properties.get("bulkActions").toString().trim());
-        Config.byteSizeValue = properties.get("byteSizeValue")==null?conf.getLong("byteSizeValue",10):Long.parseLong(properties.get("byteSizeValue").toString().trim());
-        Config.concurrentRequests = properties.get("concurrentRequests")==null? conf.getInt("concurrentRequests",1):Integer.parseInt(properties.get("concurrentRequests").toString().trim());
-        Config.flushInterval = properties.get("flushInterval")==null?conf.getInt("flushInterval",60):Integer.parseInt(properties.get("flushInterval").toString().trim());
-        Config.backoffPolicyDelayTime = properties.get("backoffPolicyDelayTime")==null?conf.getLong("backoffPolicyDelayTime",5l):Integer.parseInt(properties.get("backoffPolicyDelayTime").toString().trim());
-        Config.backoffPolicyRetries = properties.get("backoffPolicyRetries")==null?conf.getInt("backoffPolicyRetries",3):Integer.parseInt(properties.get("backoffPolicyRetries").toString().trim());
+        Config.bulkActions = conf.get("bulkActions")==null?Integer.parseInt(properties.get("bulkActions").toString().trim()):conf.getInt("bulkActions",1000);
+        Config.byteSizeValue = conf.get("byteSizeValue")==null?Long.parseLong(properties.get("byteSizeValue").toString().trim()):conf.getLong("byteSizeValue",10);
+        Config.concurrentRequests = conf.get("concurrentRequests")==null?Integer.parseInt(properties.get("concurrentRequests").toString().trim()):conf.getInt("concurrentRequests",1);
+        Config.flushInterval = conf.get("flushInterval")==null?Integer.parseInt(properties.get("flushInterval").toString().trim()):conf.getInt("flushInterval",60);
+        Config.backoffPolicyDelayTime = conf.get("backoffPolicyDelayTime")==null?Long.parseLong(properties.get("backoffPolicyDelayTime").toString().trim()):conf.getLong("backoffPolicyDelayTime",5l);
+        Config.backoffPolicyRetries = conf.get("backoffPolicyRetries")==null?Integer.parseInt(properties.get("backoffPolicyRetries").toString().trim()):conf.getInt("backoffPolicyRetries",3);
 
-        Config.ip_table_field=properties.get("ip_table_field")==null?conf.get("ip_table_field"):properties.get("ip_table_field").toString().trim();
-        Config.ip_country=properties.get("ip_country")==null?conf.get("ip_country"):properties.get("ip_country").toString().trim();
-        Config.ip_region=properties.get("ip_region")==null?conf.get("ip_region"):properties.get("ip_region").toString().trim();
-        Config.ip_city=properties.get("ip_city")==null?conf.get("ip_city"):properties.get("ip_city").toString().trim();
-        Config.ip_data=properties.get("ip_data")==null?conf.get("ip_data"):properties.get("ip_data").toString().trim();
-        Config.ip_column=properties.get("ip_column")==null?conf.get("ip_column"):properties.get("ip_column").toString().trim();
+        Config.ip_table_field = conf.get("ip_table_field")==null?properties.get("ip_table_field").toString().trim():conf.get("ip_table_field");
+        Config.ip_country = conf.get("ip_country")==null?properties.get("ip_country").toString().trim():conf.get("ip_country");
+        Config.ip_region = conf.get("ip_region")==null?properties.get("ip_region").toString().trim():conf.get("ip_region");
+        Config.ip_city = conf.get("ip_city")==null?properties.get("ip_city").toString().trim():conf.get("ip_city");
+        Config.ip_data = conf.get("ip_data")==null?properties.get("ip_data").toString().trim():conf.get("ip_data");
+        Config.ip_column = conf.get("ip_column")==null?properties.get("ip_column").toString().trim():conf.get("ip_column");
 
         logger.debug("observer -- started with config:: " + Config.getInfo());
     }
