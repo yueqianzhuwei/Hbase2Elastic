@@ -17,7 +17,7 @@
 ///**
 // * Created by Administrator on 2018/9/22.
 // */
-//public class Test {
+//public class TestUtils {
 //    private static RestHighLevelClient client=null;
 //
 //    static {

@@ -1,5 +1,6 @@
 package com.chinapex.coprocessor;
 
+import com.chinapex.utils.IPUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -29,9 +30,10 @@ import java.util.*;
  */
 public class HbaseObserver extends BaseRegionObserver{
 
-    private static final Log LOG = LogFactory.getLog(HbaseObserver.class);
+    private static final Log logger = LogFactory.getLog(HbaseObserver.class);
 
     private static final String configurePath="configure.properties";
+
 
 
     /**
@@ -61,9 +63,9 @@ public class HbaseObserver extends BaseRegionObserver{
         Config.ip_region=properties.get("ip_region")==null?conf.get("ip_region"):properties.get("ip_region").toString().trim();
         Config.ip_city=properties.get("ip_city")==null?conf.get("ip_city"):properties.get("ip_city").toString().trim();
         Config.ip_data=properties.get("ip_data")==null?conf.get("ip_data"):properties.get("ip_data").toString().trim();
+        Config.ip_column=properties.get("ip_column")==null?conf.get("ip_column"):properties.get("ip_column").toString().trim();
 
-
-        LOG.debug("observer -- started with config:: " + Config.getInfo());
+        logger.debug("observer -- started with config:: " + Config.getInfo());
     }
 
     @Override
@@ -73,34 +75,40 @@ public class HbaseObserver extends BaseRegionObserver{
 
     @Override
     public void prePut(ObserverContext<RegionCoprocessorEnvironment> e, Put put, WALEdit edit, Durability durability){
+
         String _id = new String(put.getRow());
         Map<String, String> _cell = new HashMap<String, String>();
         _cell = addCells(put.getFamilyCellMap());
-//        if (Config.ip_table_field != null && !Config.ip_table_field.equals("")
-//                && _cell.get(Config.ip_table_field) != null
-//                && Config.ip_country != null && !Config.ip_country.equals("")
-//                && Config.ip_region != null && !Config.ip_region.equals("")
-//                && Config.ip_city != null && !Config.ip_city.equals("")){
-//            IPUtils ipUtils=new IPUtils();
-//            Map<String, String> ipmap = ipUtils.geoDataMap(_cell.get(Config.ip_table_field));
-//            _cell.put(Config.ip_country,ipmap.get("country"));
-//            _cell.put(Config.ip_region,ipmap.get("region"));
-//            _cell.put(Config.ip_city,ipmap.get("city"));
-//            LOG.info(ipmap.get("country")+","+ipmap.get("region")+","+ipmap.get("city"));
-//        }
-//        ElasticOperator.addDocWriteRequestToBulk(new UpdateRequest(Config.indexName, Config.typeName, _id).doc(_cell).upsert(_cell));
+
+        if (Config.ip_table_field != null && !Config.ip_table_field.equals("")
+                && _cell.get(Config.ip_table_field) != null
+                && Config.ip_country != null && !Config.ip_country.equals("")
+                && Config.ip_region != null && !Config.ip_region.equals("")
+                && Config.ip_city != null && !Config.ip_city.equals("")){
+            IPUtils ipUtils=new IPUtils();
+            Map<String, String> ipmap = ipUtils.geoDataMap(_cell.get(Config.ip_table_field));
+            _cell.put(Config.ip_country,ipmap.get("country"));
+            _cell.put(Config.ip_region,ipmap.get("region"));
+            _cell.put(Config.ip_city,ipmap.get("city"));
+            logger.debug(ipmap.get("country")+","+ipmap.get("region")+","+ipmap.get("city"));
+
+            put.addColumn(Bytes.toBytes(Config.ip_column),Bytes.toBytes(Config.ip_country),Bytes.toBytes(ipmap.get("country")));
+            put.addColumn(Bytes.toBytes(Config.ip_column),Bytes.toBytes(Config.ip_region),Bytes.toBytes(ipmap.get("region")));
+            put.addColumn(Bytes.toBytes(Config.ip_column),Bytes.toBytes(Config.ip_city),Bytes.toBytes(ipmap.get("city")));
+        }
+        /**ElasticOperator.addDocWriteRequestToBulk(new UpdateRequest(Config.indexName, Config.typeName, _id).doc(_cell).upsert(_cell)); **/
         BulkOperator bulkOperator=new BulkOperator();
         bulkOperator.bulkProcessor.add(new UpdateRequest(Config.indexName, Config.typeName, _id).doc(_cell).upsert(_cell));
-        LOG.debug("add _id:"+Config.typeName+","+_id);
+        logger.debug("add _id:"+Config.typeName+","+_id);
     }
 
     @Override
     public void postDelete(ObserverContext<RegionCoprocessorEnvironment> e, Delete delete, WALEdit edit, Durability durability){
         String _id = new String(delete.getRow());
-//        ElasticOperator.addDocWriteRequestToBulk(new DeleteRequest(Config.indexName, Config.typeName, _id));
+        /**ElasticOperator.addDocWriteRequestToBulk(new DeleteRequest(Config.indexName, Config.typeName, _id));**/
         BulkOperator bulkOperator=new BulkOperator();
         bulkOperator.bulkProcessor.add(new DeleteRequest(Config.indexName, Config.typeName, _id));
-        LOG.debug("del _id:"+Config.typeName+","+_id);
+        logger.debug("del _id:"+Config.typeName+","+_id);
     }
 
     /**
@@ -116,7 +124,7 @@ public class HbaseObserver extends BaseRegionObserver{
                 //值转化
                 String value = Bytes.toString(CellUtil.cloneValue(cell));
                 map.put(key, value);
-                LOG.debug("请求参数Key::"+key+",Value::"+value);
+                logger.debug("请求参数Key::"+key+",Value::"+value);
             }
         }
         return map;
@@ -133,7 +141,7 @@ public class HbaseObserver extends BaseRegionObserver{
             try {
                 props.load(inputStreamn);
             } catch (IOException e) {
-                LOG.error("读取配置文件发生异常:"+e.getMessage());
+                logger.error("读取配置文件发生异常:"+e.getMessage());
             }
         }
         return props;

@@ -50,14 +50,16 @@ public class Config {
 
     // 配置IP地址解析的表名字和表字段
     static String ip_table_field;
-    //配置IP解析之后,作为hbase和es新字段:国家字段名
+    // 配置IP解析之后,作为hbase和es新字段:国家字段名
     static String ip_country;
-    //配置IP解析之后,作为hbase和es新字段:省字段名
+    // 配置IP解析之后,作为hbase和es新字段:省字段名
     static String ip_region;
-    //配置IP解析之后,作为hbase和es新字段国家：城市字段名
+    // 配置IP解析之后,作为hbase和es新字段国家：城市字段名
     static String ip_city;
-    //ipData路径
+    // ipData路径
     public static String ip_data;
+    // 列簇名
+    static String ip_column;
 
 
     /**

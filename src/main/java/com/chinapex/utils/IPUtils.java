@@ -1,7 +1,10 @@
 package com.chinapex.utils;
 
+import com.chinapex.coprocessor.Config;
 import sun.misc.IOUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -17,9 +20,6 @@ import java.util.Map;
  * @Version: 1.0
  */
 public class IPUtils {
-
-
-    public static final String datapath="/assets/ip.data";
 
     public  synchronized Map<String,String> geoDataMap(String ip) {
         int loc = Integer.parseInt(String.valueOf(ip2Long(ip)));
@@ -50,10 +50,10 @@ public class IPUtils {
         return ((ip[0] << 16) + (ip[1] << 8) + ip[2]) * 5;
     }
 
-    public   byte[] readBytesFromResource() {
+    public byte[] readBytesFromResource() {
         try {
-            InputStream stream = IPUtils.class.getResourceAsStream(IPUtils.datapath);
-//            InputStream stream = new FileInputStream(new File(path));
+//            InputStream stream = IPUtils.class.getResourceAsStream(IPUtils.datapath);  相对于当前项目
+            InputStream stream = new FileInputStream(new File(Config.ip_data));  //绝对路径
             return IOUtils.readFully(stream, -1, false);
         } catch (IOException e) {
             e.printStackTrace();

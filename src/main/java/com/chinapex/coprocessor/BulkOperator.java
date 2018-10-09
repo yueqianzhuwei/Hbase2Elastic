@@ -25,7 +25,7 @@ import java.util.function.BiConsumer;
 public class BulkOperator
 {
 
-    private static final Log LOG = LogFactory.getLog(BulkOperator.class);
+    private static final Log logger = LogFactory.getLog(BulkOperator.class);
 
     // Java REST Client
     private static RestHighLevelClient client=null;
@@ -42,7 +42,7 @@ public class BulkOperator
             }
         }catch(Exception e){
         e.printStackTrace();
-            LOG.error("客户端初始化异常,请联系管理员.");
+            logger.error("客户端初始化异常,请联系管理员.");
         }
     }
 

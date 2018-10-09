@@ -4,11 +4,11 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * \* Created with IntelliJ IDEA.
- * \* User: baibing.shang
- * \* Date: 2018/7/19
- * \* Description:
- * \
+ *  Created with IntelliJ IDEA.
+ *  User: baibing.shang
+ *  Date: 2018/7/19
+ *  Description:
+ *
  */
 public class IpGeoConst {
 
